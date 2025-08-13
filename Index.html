@@ -4,14 +4,758 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>한국사 능력시험 기출문제 풀어보기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>한국사 기출문제 시스템</title>
+  <style>
+    body {
+      font-family: 'Malgun Gothic', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+      min-height: 100vh;
+      position: relative;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      padding: 40px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 2.5em;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 1.2em;
+    }
+    .exam-list {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      padding: 40px;
+      margin-bottom: 30px;
+    }
+    .exam-list h2 {
+      color: #333;
+      border-bottom: 3px solid #4ecdc4;
+      padding-bottom: 15px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .exam-item {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .exam-item:hover {
+      border-color: #4ecdc4;
+      background: #e8f5f4;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    .exam-date {
+      font-size: 1.3em;
+      font-weight: bold;
+      color: #4ecdc4;
+      margin-bottom: 15px;
+    }
+    .exam-info {
+      color: #666;
+      font-size: 1em;
+    }
+    .quiz-container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      padding: 40px;
+      margin-bottom: 30px;
+      display: none;
+    }
+    .quiz-container h2 {
+      color: #333;
+      border-bottom: 3px solid #4ecdc4;
+      padding-bottom: 15px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .question {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 25px;
+      position: relative;
+    }
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .question-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    .btn-small {
+      padding: 8px 16px;
+      font-size: 14px;
+      margin: 0;
+    }
+    .explanation {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+      border-left: 4px solid #4ecdc4;
+    }
+    .explanation-content h4 {
+      color: #4ecdc4;
+      margin: 0 0 15px 0;
+      font-size: 1.1em;
+    }
+    .explanation-content p {
+      margin: 0;
+      line-height: 1.6;
+      color: #555;
+    }
+    .question-number {
+      font-weight: bold;
+      color: #4ecdc4;
+      font-size: 1.2em;
+    }
+    .question-text {
+      margin-bottom: 25px;
+      line-height: 1.7;
+      font-size: 1.1em;
+    }
+    .question-image {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      margin: 15px 0;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .options {
+      display: grid;
+      gap: 15px;
+    }
+    .option {
+      background: white;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      padding: 18px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .option:hover {
+      border-color: #4ecdc4;
+      background: #f0f9f8;
+    }
+            .option.selected {
+            border-color: #4ecdc4;
+            background: linear-gradient(135deg, #e8f5f4 0%, #d4f1f0 100%);
+            position: relative;
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.3);
+            transform: translateY(-2px);
+        }
+        .option.selected::after {
+            content: "✓ 선택됨";
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #4ecdc4;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+    .option.correct {
+      border-color: #28a745;
+      background: #d4edda;
+    }
+    .option.incorrect {
+      border-color: #dc3545;
+      background: #f8d7da;
+    }
+    .result-indicator {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: #28a745;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: bold;
+      z-index: 10;
+    }
+    .btn {
+      background: linear-gradient(45deg, #4ecdc4, #44a08d);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px;
+      transition: all 0.3s ease;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    .btn-secondary {
+      background: linear-gradient(45deg, #6c757d, #495057);
+    }
+    .score-display {
+      background: #e8f5f4;
+      border: 2px solid #4ecdc4;
+      border-radius: 15px;
+      padding: 25px;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    .score-text {
+      font-size: 1.4em;
+      font-weight: bold;
+      color: #4ecdc4;
+    }
+    .back-to-list {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    .back-to-list button {
+      background: linear-gradient(45deg, #6c757d, #495057);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .back-to-list button:hover {
+      background: linear-gradient(45deg, #5a6268, #343a40);
+    }
+    .admin-access {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1000;
+    }
+    .admin-btn {
+      background: rgba(0, 0, 0, 0.3);
+      color: rgba(255, 255, 255, 0.7);
+      border: none;
+      padding: 8px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    .admin-btn:hover {
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      backdrop-filter: blur(5px);
+    }
+    .modal-content {
+      background-color: white;
+      margin: 15% auto;
+      padding: 30px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    .modal input {
+      width: 100%;
+      padding: 15px;
+      margin: 20px 0;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    .modal input:focus {
+      border-color: #4ecdc4;
+      outline: none;
+    }
+    .modal .btn {
+      margin: 10px;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: -20px;
+      margin-right: -20px;
+    }
+    .close:hover {
+      color: #000;
+    }
+  </style>
 </head>
 <body>
-  <h1>한국사 능력시험 기출문제 연습 사이트</h1>
-  <h1>Korean History Proficiency Test Practice Site</h1>
+  <!-- 관리자 접근 버튼 -->
+  <div class="admin-access">
+    <button class="admin-btn" onclick="showAdminModal()">⚙️</button>
+  </div>
 
-  <p>이곳에서 기출문제를 풀고, 성적을 향상시켜 보세요.</p>
-  <p>Solve past exam questions here and improve your performance.</p>
+  <div class="container">
+    <div class="header">
+      <h1>한국사 기출문제 학습 시스템</h1>
+      <p class="subtitle">Korean History Proficiency Test Practice System</p>
+    </div>
 
+    <!-- 시험 목록 섹션 -->
+    <div class="exam-list" id="examList">
+      <h2>📚 기출문제 목록</h2>
+      <div id="examItems">
+        <!-- 시험 일자별 목록이 여기에 표시됩니다 -->
+      </div>
+    </div>
+
+    <!-- 문제 풀이 섹션 -->
+    <div class="quiz-container" id="quizContainer">
+      <div class="back-to-list">
+        <button onclick="showExamList()">← 목록으로 돌아가기</button>
+      </div>
+      
+      <h2 id="quizTitle">기출문제 풀이</h2>
+      
+      <div class="score-display" id="scoreDisplay" style="display: none;">
+        <div class="score-text" id="scoreText"></div>
+      </div>
+      
+      <div id="questionsContainer">
+        <!-- 문제들이 여기에 표시됩니다 -->
+      </div>
+      
+      <div style="text-align: center; margin-top: 30px;">
+        <button class="btn" onclick="gradeQuiz()">채점하기</button>
+        <button class="btn btn-secondary" onclick="resetQuiz()">다시 풀기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 관리자 비밀번호 모달 -->
+  <div id="adminModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeAdminModal()">&times;</span>
+      <h2>관리자 접근</h2>
+      <p>비밀번호를 입력하세요</p>
+      <input type="password" id="adminPassword" placeholder="비밀번호 입력" onkeypress="handlePasswordEnter(event)">
+      <div style="margin-top: 20px;">
+        <button class="btn" onclick="checkAdminPassword()">확인</button>
+        <button class="btn btn-secondary" onclick="closeAdminModal()">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentQuestions = [];
+    let currentExamDate = '';
+    let userAnswers = {};
+
+    // 페이지 로드 시 시험 목록 표시
+    window.onload = function() {
+      displayExamList();
+    };
+
+    // 시험 목록 표시
+    function displayExamList() {
+      const examDates = JSON.parse(localStorage.getItem('examDates')) || [];
+      const questions = JSON.parse(localStorage.getItem('koreanHistoryQuestions')) || [];
+      
+      const container = document.getElementById('examItems');
+      
+      if (examDates.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #666;">등록된 기출문제가 없습니다.</p>';
+        return;
+      }
+
+      let html = '';
+      examDates.forEach(date => {
+        const dateQuestions = questions.filter(q => q.examDate === date);
+        if (dateQuestions.length > 0) {
+          html += `
+            <div class="exam-item" onclick="startQuiz('${date}')">
+              <div class="exam-date">📅 ${date}</div>
+              <div class="exam-info">
+                총 ${dateQuestions.length}문제 | 
+                <span style="color: #4ecdc4;">클릭하여 문제 풀기</span>
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      container.innerHTML = html;
+    }
+
+    // 퀴즈 시작
+    function startQuiz(examDate) {
+      const questions = JSON.parse(localStorage.getItem('koreanHistoryQuestions')) || [];
+      currentQuestions = questions.filter(q => q.examDate === examDate);
+      currentExamDate = examDate;
+      userAnswers = {};
+
+      if (currentQuestions.length === 0) {
+        alert('해당 일자의 문제를 찾을 수 없습니다.');
+        return;
+      }
+
+      // 문제 섹션 표시
+      document.getElementById('examList').style.display = 'none';
+      document.getElementById('quizContainer').style.display = 'block';
+      document.getElementById('quizTitle').textContent = `${examDate} 기출문제`;
+      document.getElementById('scoreDisplay').style.display = 'none';
+
+      displayQuestions();
+    }
+
+    // 문제 표시
+    function displayQuestions() {
+      const container = document.getElementById('questionsContainer');
+      
+      let html = '';
+      currentQuestions.forEach((q, index) => {
+          html += `
+              <div class="question" id="question${q.id}">
+                  <div class="question-header">
+                      <span class="question-number" id="questionNumber${q.id}">문제 ${index + 1}</span>
+                      <div class="question-buttons">
+                          <button class="btn btn-secondary btn-small" onclick="toggleExplanation(${q.id})">해설</button>
+                          <button class="btn btn-small" onclick="gradeSingleQuestion(${q.id})">채점하기</button>
+                      </div>
+                  </div>
+                  <div class="question-text">${q.question}</div>
+                  ${q.image ? `<img src="${q.image}" alt="문제 이미지" class="question-image">` : ''}
+                  <div class="options">
+                      ${q.options.map((option, optionIndex) => `
+                          <div class="option" onclick="selectOption(${q.id}, ${optionIndex + 1})" id="option${q.id}_${optionIndex + 1}">
+                              ${optionIndex + 1}. ${option}
+                          </div>
+                      `).join('')}
+                  </div>
+                  <div class="explanation" id="explanation${q.id}" style="display: none;">
+                      <div class="explanation-content">
+                          <h4>📚 해설</h4>
+                          <p>${q.explanation || '이 문제에 대한 해설이 등록되지 않았습니다. 관리자에게 문의해주세요.'}</p>
+                      </div>
+                  </div>
+              </div>
+          `;
+      });
+
+      container.innerHTML = html;
+    }
+
+        // 답안 선택/해제 (성능 최적화)
+    function selectOption(questionId, optionNumber) {
+        // 즉시 사용자 답안 업데이트
+        const currentAnswer = userAnswers[questionId];
+        
+        if (currentAnswer === optionNumber) {
+            // 선택 해제
+            userAnswers[questionId] = null;
+            updateOptionDisplay(questionId, null);
+        } else {
+            // 새로운 선택
+            userAnswers[questionId] = optionNumber;
+            updateOptionDisplay(questionId, optionNumber);
+        }
+    }
+
+    // 옵션 표시 업데이트 (DOM 조작 최적화)
+    function updateOptionDisplay(questionId, selectedOptionNumber) {
+        const question = document.getElementById(`question${questionId}`);
+        if (!question) return;
+        
+        const options = question.querySelectorAll('.option');
+        
+        options.forEach((option, index) => {
+            const optionNumber = index + 1;
+            if (optionNumber === selectedOptionNumber) {
+                option.classList.add('selected');
+            } else {
+                option.classList.remove('selected');
+            }
+        });
+    }
+
+    // 해설 토글
+    function toggleExplanation(questionId) {
+        const explanationDiv = document.getElementById(`explanation${questionId}`);
+        if (explanationDiv.style.display === 'none') {
+            explanationDiv.style.display = 'block';
+        } else {
+            explanationDiv.style.display = 'none';
+        }
+    }
+
+    // 개별 문제 채점
+    function gradeSingleQuestion(questionId) {
+        const question = currentQuestions.find(q => q.id === questionId);
+        if (!question) return;
+
+        const userAnswer = userAnswers[questionId];
+        const questionNumberSpan = document.getElementById(`questionNumber${questionId}`);
+        
+        if (!userAnswer) {
+            alert('먼저 답안을 선택해주세요.');
+            return;
+        }
+
+        // 기존 결과 표시 제거
+        const existingResult = questionNumberSpan.querySelector('.result-indicator');
+        if (existingResult) {
+            existingResult.remove();
+        }
+
+        // 정답 여부 확인
+        if (userAnswer === question.answer) {
+            // 정답: 초록색 동그라미
+            const resultIndicator = document.createElement('span');
+            resultIndicator.className = 'result-indicator';
+            resultIndicator.innerHTML = '✓';
+            resultIndicator.style.cssText = `
+                display: inline-block;
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background: #28a745;
+                color: white;
+                text-align: center;
+                line-height: 24px;
+                font-size: 16px;
+                font-weight: bold;
+                margin-left: 10px;
+                vertical-align: middle;
+            `;
+            questionNumberSpan.appendChild(resultIndicator);
+        } else {
+            // 오답: 빨간색 엑스
+            const resultIndicator = document.createElement('span');
+            resultIndicator.className = 'result-indicator';
+            resultIndicator.innerHTML = '✗';
+            resultIndicator.style.cssText = `
+                display: inline-block;
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background: #dc3545;
+                color: white;
+                text-align: center;
+                line-height: 24px;
+                font-size: 16px;
+                font-weight: bold;
+                margin-left: 10px;
+                vertical-align: middle;
+            `;
+            questionNumberSpan.appendChild(resultIndicator);
+        }
+    }
+
+    // 채점
+    function gradeQuiz() {
+      let score = 0;
+      let totalQuestions = currentQuestions.length;
+
+      currentQuestions.forEach(q => {
+        const userAnswer = userAnswers[q.id];
+        const questionDiv = document.getElementById(`question${q.id}`);
+        
+        if (userAnswer) {
+          const optionDiv = document.getElementById(`option${q.id}_${userAnswer - 1}`);
+          
+          if (userAnswer === q.answer) {
+            optionDiv.classList.add('correct');
+            score++;
+            
+            // 정답 표시 (초록색 동그라미)
+            const resultIndicator = document.createElement('div');
+            resultIndicator.className = 'result-indicator';
+            resultIndicator.innerHTML = '✓';
+            questionDiv.appendChild(resultIndicator);
+          } else {
+            optionDiv.classList.add('incorrect');
+            
+            // 정답 표시
+            const correctOption = document.getElementById(`option${q.id}_${q.answer - 1}`);
+            correctOption.classList.add('correct');
+          }
+        }
+      });
+
+      // 점수 표시
+      const scoreText = document.getElementById('scoreText');
+      scoreText.textContent = `총점: ${score} / ${totalQuestions} (${Math.round(score/totalQuestions*100)}%)`;
+      document.getElementById('scoreDisplay').style.display = 'block';
+
+      // 채점 후 답안 변경 불가
+      currentQuestions.forEach(q => {
+          const questionDiv = document.getElementById(`question${q.id}`);
+          questionDiv.querySelectorAll('.option').forEach(opt => {
+              opt.style.pointerEvents = 'none';
+          });
+      });
+      
+      // 미응답 문제 표시
+      currentQuestions.forEach(q => {
+          if (!userAnswers[q.id]) {
+              const questionDiv = document.getElementById(`question${q.id}`);
+              const noAnswerDiv = document.createElement('div');
+              noAnswerDiv.style.cssText = 'background: #f8d7da; color: #721c24; padding: 10px; border-radius: 8px; margin-top: 10px; text-align: center; font-weight: bold;';
+              noAnswerDiv.textContent = '⚠️ 답안을 선택하지 않았습니다';
+              questionDiv.appendChild(noAnswerDiv);
+          }
+      });
+    }
+
+    // 퀴즈 리셋
+    function resetQuiz() {
+      userAnswers = {};
+      displayQuestions();
+      document.getElementById('scoreDisplay').style.display = 'none';
+    }
+
+    // 목록으로 돌아가기
+    function showExamList() {
+      document.getElementById('examList').style.display = 'block';
+      document.getElementById('quizContainer').style.display = 'none';
+      currentQuestions = [];
+      currentExamDate = '';
+      userAnswers = {};
+    }
+
+    // 관리자 모달 표시
+    function showAdminModal() {
+      document.getElementById('adminModal').style.display = 'block';
+      document.getElementById('adminPassword').focus();
+    }
+
+    // 관리자 모달 닫기
+    function closeAdminModal() {
+      document.getElementById('adminModal').style.display = 'none';
+      document.getElementById('adminPassword').value = '';
+    }
+
+    // 비밀번호 엔터키 처리
+    function handlePasswordEnter(event) {
+      if (event.key === 'Enter') {
+        checkAdminPassword();
+      }
+    }
+
+    // 관리자 비밀번호 확인
+    function checkAdminPassword() {
+      const password = document.getElementById('adminPassword').value;
+      if (password === '271601@Mon') {
+        closeAdminModal();
+        window.location.href = 'admin.html';
+      } else {
+        alert('비밀번호가 올바르지 않습니다.');
+        document.getElementById('adminPassword').value = '';
+        document.getElementById('adminPassword').focus();
+      }
+    }
+
+    // 모달 외부 클릭 시 닫기
+    window.onclick = function(event) {
+      const modal = document.getElementById('adminModal');
+      if (event.target === modal) {
+        closeAdminModal();
+      }
+    }
+
+            // 샘플 데이터 추가 (테스트용)
+        function addSampleData() {
+            const sampleQuestions = [
+                {
+                    id: 1,
+                    question: "(가) 시대의 생활 모습으로 가장 적절한 것은?",
+                    options: [
+                        "가락바퀴를 이용하여 실을 뽑았다.",
+                        "철제 농기구를 만들어 농사를 지었다.",
+                        "지배층의 무덤으로 고인돌을 만들었다.",
+                        "거푸집을 사용하여 청동기를 제작하였다."
+                    ],
+                    answer: 1,
+                    examDate: "2024년 3월 9일",
+                    examType: "일반",
+                    explanation: "청동기 시대에는 거푸집을 사용하여 청동기를 제작하였습니다. 청동기는 주석과 구리를 혼합하여 만든 합금으로, 농기구, 무기, 예기 등 다양한 용도로 사용되었습니다.",
+                    createdAt: new Date().toISOString(),
+                    imageMissing: false
+                },
+                {
+                    id: 2,
+                    question: "(가) 국가에 대한 설명으로 옳은 것은?",
+                    options: [
+                        "22담로에 왕족을 파견하였다.",
+                        "주요한 5곳에 소경을 설치하였다.",
+                        "국경 지역에 동계와 북계를 두었다.",
+                        "9서당 10정의 군사 조직을 운영하였다."
+                    ],
+                    answer: 1,
+                    examDate: "2024년 3월 9일",
+                    examType: "일반",
+                    explanation: "백제는 지방 통치를 위해 22담로에 왕족을 파견하여 지방을 통치하였습니다. 이는 중앙집권적 통치 체제를 구축하고 지방의 안정을 도모하기 위한 제도였습니다.",
+                    createdAt: new Date().toISOString(),
+                    imageMissing: false
+                }
+            ];
+
+      const existingQuestions = JSON.parse(localStorage.getItem('koreanHistoryQuestions')) || [];
+      const newQuestions = [...existingQuestions, ...sampleQuestions];
+      localStorage.setItem('koreanHistoryQuestions', JSON.stringify(newQuestions));
+
+      const examDates = ["2024년 3월 9일"];
+      localStorage.setItem('examDates', JSON.stringify(examDates));
+
+      displayExamList();
+    }
+
+    // 페이지 로드 시 샘플 데이터가 없으면 추가
+    if (!localStorage.getItem('koreanHistoryQuestions') || JSON.parse(localStorage.getItem('koreanHistoryQuestions')).length === 0) {
+      addSampleData();
+    }
+  </script>
 </body>
 </html>

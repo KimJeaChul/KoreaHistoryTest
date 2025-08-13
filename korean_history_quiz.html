@@ -2,37 +2,171 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>한국사 능력시험 문제풀이</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>한국사 능력시험 문제풀이 - 레거시</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .question { margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; }
-        .result { font-weight: bold; margin-top: 5px; }
-        .ok { color: green; }
-        .failed { color: red; }
+        body { 
+            font-family: 'Malgun Gothic', Arial, sans-serif; 
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+        .nav-back {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .nav-back a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 1.1em;
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        .nav-back a:hover {
+            background: #667eea;
+            color: white;
+        }
+        .question { 
+            margin-bottom: 20px; 
+            padding: 20px; 
+            border: 2px solid #e9ecef; 
+            border-radius: 10px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        .question:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .result { 
+            font-weight: bold; 
+            margin-top: 10px; 
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-align: center;
+        }
+        .ok { 
+            color: white; 
+            background: #28a745;
+        }
+        .failed { 
+            color: white; 
+            background: #dc3545;
+        }
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .score-display {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .options label {
+            display: block;
+            padding: 10px;
+            margin: 5px 0;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .options label:hover {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+        .options input[type='radio'] {
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
-    <h1>한국사 능력시험 문제풀이</h1>
-    <div id="quiz-container"></div>
-    <button onclick="gradeQuiz()">채점하기</button>
-    <p id="score"></p>
+    <div class="container">
+        <div class="nav-back">
+            <a href="Index.html">← 메인 페이지로 돌아가기</a>
+        </div>
+        
+        <div class="header">
+            <h1>한국사 능력시험 문제풀이</h1>
+            <p>샘플 문제를 풀어보세요</p>
+        </div>
+        
+        <div id="quiz-container"></div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <button class="btn" onclick="gradeQuiz()">채점하기</button>
+            <button class="btn" onclick="resetQuiz()">다시 풀기</button>
+        </div>
+        
+        <div id="score" class="score-display" style="display: none;"></div>
+    </div>
+
     <script>
-        const questions = [{"number": 1, "question": "(가) 시대의 생활 모습으로 가장 적절한 것은?\b", "options": ["가락바퀴를 이용하여 실을 뽑았다.", "철제 농기구를 만들어 농사를 지었다.", "지배층의 무덤으로 고인돌을 만들었다.", "거푸집을 사용하여 청동기를 제작하였다."], "answer": 1}, {"number": 2, "question": "(가) 국가에 대한 설명으로 옳은 것은? \b", "options": ["22담로에 왕족을 파견하였다.", "주요한 5곳에 소경을 설치하였다.", "국경 지역에 동계와 북계를 두었다.", "9서당 10정의 군사 조직을 운영하였다."], "answer": 1}, {"number": 3, "question": "밑줄 그은 ‘왕’의 재위 시기에 있었던 사실로 옳은 것은?\b", "options": ["교정도감이 설치되었다.", "농사직설이 편찬되었다.", "초조대장경이 제작되었다.", "이자겸의 난이 발생하였다."], "answer": 4}, {"number": 4, "question": "밑줄 그은 ‘국왕’의 업적으로 옳은 것은? \b", "options": ["삼국사기를 편찬하였다.", "훈민정음을 창제하였다.", "초계문신제를 실시하였다.", "통리기무아문을 설치하였다."], "answer": 1}, {"number": 5, "question": "(가) 정책이 추진된 시기에 있었던 사실로 옳은 것은?\b", "options": ["회사령이 시행되었다.", "관민 공동회가 열렸다.", "원산 총파업이 일어났다.", "국가 총동원법이 제정되었다."], "answer": 1}, {"number": 6, "question": "(가)에 들어갈 민주화 운동으로 옳은 것은?\b", "options": ["4·19 혁명", "6월 민주 항쟁", "부마 민주 항쟁", "5·18 민주화 운동"], "answer": 4}, {"number": 7, "question": "(가) 정부 시기의 경제 상황으로 옳은 것은?\b", "options": ["금융 실명제가 전면 실시되었다.", "칠레와 자유 무역 협정(FTA)이 체결되었다.", "제2차 경제 개발 5개년 계획이 시행되었다.", "저금리·저유가·저달러의 3저 호황이 있었다."], "answer": 2}];
+        const questions = [
+            {"number": 1, "question": "(가) 시대의 생활 모습으로 가장 적절한 것은?", "options": ["가락바퀴를 이용하여 실을 뽑았다.", "철제 농기구를 만들어 농사를 지었다.", "지배층의 무덤으로 고인돌을 만들었다.", "거푸집을 사용하여 청동기를 제작하였다."], "answer": 1}, 
+            {"number": 2, "question": "(가) 국가에 대한 설명으로 옳은 것은?", "options": ["22담로에 왕족을 파견하였다.", "주요한 5곳에 소경을 설치하였다.", "국경 지역에 동계와 북계를 두었다.", "9서당 10정의 군사 조직을 운영하였다."], "answer": 1}, 
+            {"number": 3, "question": "밑줄 그은 '왕'의 재위 시기에 있었던 사실로 옳은 것은?", "options": ["교정도감이 설치되었다.", "농사직설이 편찬되었다.", "초조대장경이 제작되었다.", "이자겸의 난이 발생하였다."], "answer": 4}, 
+            {"number": 4, "question": "밑줄 그은 '국왕'의 업적으로 옳은 것은?", "options": ["삼국사기를 편찬하였다.", "훈민정음을 창제하였다.", "초계문신제를 실시하였다.", "통리기무아문을 설치하였다."], "answer": 1}, 
+            {"number": 5, "question": "(가) 정책이 추진된 시기에 있었던 사실로 옳은 것은?", "options": ["회사령이 시행되었다.", "관민 공동회가 열렸다.", "원산 총파업이 일어났다.", "국가 총동원법이 제정되었다."], "answer": 1}, 
+            {"number": 6, "question": "(가)에 들어갈 민주화 운동으로 옳은 것은?", "options": ["4·19 혁명", "6월 민주 항쟁", "부마 민주 항쟁", "5·18 민주화 운동"], "answer": 4}, 
+            {"number": 7, "question": "(가) 정부 시기의 경제 상황으로 옳은 것은?", "options": ["금융 실명제가 전면 실시되었다.", "칠레와 자유 무역 협정(FTA)이 체결되었다.", "제2차 경제 개발 5개년 계획이 시행되었다.", "저금리·저유가·저달러의 3저 호황이 있었다."], "answer": 2}
+        ];
+        
         const container = document.getElementById("quiz-container");
-        questions.forEach(function(q) {
-            const div = document.createElement("div");
-            div.className = "question";
-            let html = `<p><strong>문제 ${q.number}:</strong> ${q.question}</p>`;
-            for (let i = 0; i < q.options.length; i++) {
-                html += `<label><input type='radio' name='q${q.number}' value='${i+1}'> ${i+1}. ${q.options[i]}</label><br>`;
-            }
-            div.innerHTML = html;
-            const resultDiv = document.createElement("div");
-            resultDiv.id = `result${q.number}`;
-            resultDiv.className = "result";
-            div.appendChild(resultDiv);
-            container.appendChild(div);
-        });
+        
+        function displayQuestions() {
+            container.innerHTML = '';
+            questions.forEach(function(q) {
+                const div = document.createElement("div");
+                div.className = "question";
+                let html = `<p><strong>문제 ${q.number}:</strong> ${q.question}</p>`;
+                html += '<div class="options">';
+                for (let i = 0; i < q.options.length; i++) {
+                    html += `<label><input type='radio' name='q${q.number}' value='${i+1}'> ${i+1}. ${q.options[i]}</label>`;
+                }
+                html += '</div>';
+                div.innerHTML = html;
+                
+                const resultDiv = document.createElement("div");
+                resultDiv.id = `result${q.number}`;
+                resultDiv.className = "result";
+                div.appendChild(resultDiv);
+                container.appendChild(div);
+            });
+        }
+        
         function gradeQuiz() {
             let score = 0;
             questions.forEach(function(q) {
@@ -41,11 +175,11 @@
                 if (selected) {
                     const userAnswer = parseInt(selected.value);
                     if (userAnswer === q.answer) {
-                        resultDiv.textContent = "OK";
+                        resultDiv.textContent = "정답 ✓";
                         resultDiv.className = "result ok";
                         score += 1;
                     } else {
-                        resultDiv.textContent = "Failed";
+                        resultDiv.textContent = "오답 ✗";
                         resultDiv.className = "result failed";
                     }
                 } else {
@@ -53,8 +187,33 @@
                     resultDiv.className = "result failed";
                 }
             });
-            document.getElementById("score").textContent = `총 점수: ${score} / ${questions.length}`;
+            
+            const scoreElement = document.getElementById('score');
+            scoreElement.textContent = `총 점수: ${score} / ${questions.length} (${Math.round(score/questions.length*100)}%)`;
+            scoreElement.style.display = 'block';
         }
+        
+        function resetQuiz() {
+            // 모든 라디오 버튼 해제
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.checked = false;
+            });
+            
+            // 모든 결과 표시 제거
+            questions.forEach(q => {
+                const resultDiv = document.getElementById(`result${q.number}`);
+                resultDiv.textContent = '';
+                resultDiv.className = 'result';
+            });
+            
+            // 점수 표시 숨기기
+            document.getElementById('score').style.display = 'none';
+        }
+        
+        // 페이지 로드 시 문제 표시
+        window.onload = function() {
+            displayQuestions();
+        };
     </script>
 </body>
 </html>
